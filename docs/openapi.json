@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: API de Cadastro de Pets
+  description: Documentação da API REST para cadastro e gerenciamento de pets.
+  version: 1.0.0
+servers:
+- url: http://localhost
+  description: Servidor local
+tags:
+- name: Pets
+  description: Operações de cadastro e gerenciamento de pets
+paths:
+  /pets:
+    get:
+      tags:
+      - Pets
+      summary: Lista todos os pets
+      responses:
+        '200':
+          description: Lista de pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+    post:
+      tags:
+      - Pets
+      summary: Cadastra um novo pet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetInput'
+      responses:
+        '201':
+          description: Pet cadastrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: Dados inválidos
+  /pets/{id}:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID do pet
+      schema:
+        type: integer
+        example: 1
+    get:
+      tags:
+      - Pets
+      summary: Consulta um pet pelo ID
+      responses:
+        '200':
+          description: Pet encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet não encontrado
+    patch:
+      tags:
+      - Pets
+      summary: Atualiza os dados de um pet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetInput'
+      responses:
+        '200':
+          description: Pet atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet não encontrado
+    delete:
+      tags:
+      - Pets
+      summary: Exclui um pet
+      responses:
+        '204':
+          description: Pet excluído com sucesso
+        '404':
+          description: Pet não encontrado
+components:
+  schemas:
+    PetInput:
+      type: object
+      required:
+      - nome
+      - especie
+      - raca
+      - idade
+      - sexo
+      - nome_tutor
+      properties:
+        nome:
+          type: string
+          example: Rex
+        especie:
+          type: string
+          example: Cachorro
+        raca:
+          type: string
+          example: Pastor Alemão
+        idade:
+          type: integer
+          minimum: 0
+          example: 3
+        sexo:
+          type: string
+          example: Macho
+        nome_tutor:
+          type: string
+          example: Carlos Santos
+    Pet:
+      allOf:
+      - $ref: '#/components/schemas/PetInput'
+      - type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          created_at:
+            type: string
+            format: date-time
+            example: '2026-09-17 08:30:00'
